@@ -15,6 +15,10 @@ app.secret_key = "cbca765383981f152ef9319b17cae0109c511b7b3906732336e43cee66fbe7
 
 @app.route('/')
 def main_app():  # put application's code here
+
+    if(session.get('utilisateur') is None):
+        session['utilisateur'] = None
+
     return render_template('game.html')
 
 @app.errorhandler(404)
