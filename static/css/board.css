@@ -1,0 +1,25 @@
+.board {
+    width: auto;
+}
+
+.line{
+    display: flex;
+    width: fit-content;
+}
+
+.square {
+    width: 60px;
+    height: 60px;
+}
+
+.light {
+    background-color: #f0d9b5;
+}
+
+.dark {
+    background-color: #b58863;
+}
+
+.pieceClicked{
+    border: 1px 1px 1px black;
+}
