@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<h2 class="m-lg-5">Compte</h2>
+<h4 class="m-lg-5">Créer un compte</h4>
+
+<form action="/gestion_comptes/" class="m-lg-5" id="form-compte" method="POST">
+    <fieldset>
+        <div class="form-group">
+            <label for="courriel" class="form-label mt-4">Courriel : </label>
+            <input type="email" id="courrielCreate" placeholder="Courriel" class="form-control" name="courrielCreate" required="true">
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-label mt-4">Mot de passe : </label>
+            <input type="password" id="passwordCreate" placeholder="Mot de passe" class="form-control" name="passwordCreate" required="true">
+        </div>
+        <div class="form-group">
+            <label for="passwordConf" class="form-label mt-4">Confirmer votre mot de passe : </label>
+            <input type="password" id="passwordConfCreate" placeholder="Confirmer votre mot de passe" class="form-control" name="passwordConfCreate" required="true">
+        </div>
+        <div class="form-group">
+            <label for="nom" class="form-label mt-4">Nom : </label>
+            <input type="text" id="nomCreate" placeholder="Nom" class="form-control" name="nomCreate" required="true">
+            <div id="msg-nom" class="invalid-feedback"></div>
+        </div>
+    </fieldset>
+    <br>
+    <button type="submit" class="btn btn-secondary">Créer</button>
+</form>
+<a href="/gestion_comptes/connexion" class="m-lg-5">Vous avez déja un compte ?</a>
+<script defer="defer"
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+<script defer="defer"
+        src="/static/js/compte.js"></script>
+{% endblock %}
