@@ -1,5 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from gestion_comptes import bp_gestion_comptes
+import random
 
 app = Flask(__name__)
 
@@ -45,6 +46,20 @@ def internal_server_error_403(_):
         'erreur.html',
         message="ERREUR 403"
     ), 403
+
+@app.route('/visionner')
+def visionner():
+
+    liste_video = []
+    liste_video.append("https://www.youtube.com/watch?v=1WEyUZ1SpHY&ab_channel=ChessBaseIndia")
+    liste_video.append("https://www.youtube.com/watch?v=Vyp-xTLxRQ0&ab_channel=ChessBaseIndia")
+    liste_video.append("https://www.youtube.com/watch?v=RqACK5OmNPs&ab_channel=ChessStudio")
+    liste_video.append("https://www.youtube.com/watch?v=bdfBdw8EWF0&ab_channel=Chess.com")
+    liste_video.append("https://www.youtube.com/watch?v=e91M0XLX7Jw&ab_channel=Chess.com")
+
+    nombre = random.randint(0,len(liste_video))
+    return redirect(liste_video[nombre])
+
 
 if __name__ == '__main__':
     app.run()
