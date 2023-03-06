@@ -5,7 +5,15 @@
 
 <h2 class="m-lg-5">Compte</h2>
 <h4 class="m-lg-5">Créer un compte</h4>
-
+<p>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</p>
 <form action="/gestion_comptes/" class="m-lg-5" id="form-compte" method="POST">
     <fieldset>
         <div class="form-group">

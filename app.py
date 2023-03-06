@@ -7,9 +7,13 @@ from babel import numbers, dates
 from flask_babel import Babel
 import re
 import hashlib
+from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 
+app.config["MONGO_URI"] = "mongodb://localhost:27017/ChessBras"
+mongodb_client = PyMongo(app)
+bd = mongodb_client.db
 
 app.secret_key = "cbca765383981f152ef9319b17cae0109c511b7b3906732336e43cee66fbe7ad"
 
@@ -69,8 +73,6 @@ def visionner():
     nombre = random.randint(0,len(liste_video))
     return redirect(liste_video[nombre])
 
-bd = None
-
 regex1 = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 regex2 = re.compile(r'[a-z\-\s]+')
 regexMdp = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$")
@@ -110,8 +112,7 @@ def authentification():
 
     motdepasse_hash = hashlib.sha512(motdepasse.encode()).hexdigest()
 
-    with bd.creer_connexion() as conn:
-        Compte = bd.get_compte_user(conn, courriel, motdepasse_hash)
+    Compte = bd.users.find( {"email":courriel, "mdp":motdepasse_hash} )
 
     if Compte is None:
         return render_template('auth.html', \
@@ -131,41 +132,38 @@ def creation():
     message = ""
 
     """ with bd.creer_connexion() as conn:
-        courriel_verif = bd.get_courriel(conn, courriel)
+        courriel_verif = bd.get_courriel(conn, courriel) """
 
-    if courriel =="" or nom=="" or motdepasse=="" or motdepasseconf=="" or adresse=="":
+    if courriel =="" or nom=="" or motdepasse=="" or motdepasseconf=="":
         message+=" Information(s) manquante(s)"
     if (re.search(regex1, courriel)) is None:
         message+=" Le courriel est invalide"
-    if(re.search(regexMdp, motdepasse)) is None:
-        message+=" Le mot de passe est invalide"
-    if courriel_verif is not None:
-        message+=" Ce courriel est déja utilisé."
+    """ if(re.search(regexMdp, motdepasse)) is None:
+        message+=" Le mot de passe est invalide"""
+    """ if courriel_verif is not None:
+        message+=" Ce courriel est déja utilisé. """
     if len(courriel) > 50:
         message+=" Le courriel est trop long"
-    if len(motdepasse) < 8:
+    if len(motdepasse) <= 8:
         message+=" Le mot de passe est trop court"
     if motdepasse != motdepasseconf:
         message+=" Les mots de passes ne correspondent pas"
     if len(nom) > 50 or len(nom) < 3:
         message+=" Le nom est trop long ou trop court"
-    if (re.search(regex2, nom)) is None:
-        message+=" Le nom est invalide"
-    with bd.creer_connexion() as conn:
+    """ if (re.search(regex2, nom)) is None:
+        message+=" Le nom est invalide """
+    """ with bd.creer_connexion() as conn:
         nom_unique = bd.get_nom_unique(conn, nom)
         if nom_unique != None:
-            message += "Le nom est déjà utilisé!"
+            message += "Le nom est déjà utilisé! """
 
     if (len(message) == 0):
         motdepasse = hashlib.sha512(motdepasse.encode()).hexdigest()
-        with bd.creer_connexion() as conn:
-            bd.creation_compte(conn, courriel, motdepasse, nom)
-        with bd.creer_connexion() as conn:
-            compte = bd.get_compte_user(conn, courriel, motdepasse)
-            session['utilisateur'] = compte
-            return redirect('/')
-    flash(message) """
-    return redirect('create.html')
+        compte = bd.db.users.insertOne( {"email":courriel, "mdp":motdepasse, "pays":"Canada", "nom":nom, "rang":0, "amis":[]} )
+        session['utilisateur'] = compte
+        return redirect('/')
+    flash(message)
+    return render_template('create.html')
 
 
 if __name__ == '__main__':
