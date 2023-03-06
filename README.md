@@ -1,2 +1,2 @@
 # Chess-Alec-et-Gab
-Porjet web d'Alec et Gabriel
+Projet web d'Alec et Gabriel
