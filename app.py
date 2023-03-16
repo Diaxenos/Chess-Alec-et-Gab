@@ -7,13 +7,15 @@ from babel import numbers, dates
 from flask_babel import Babel
 import re
 import hashlib
-from flask_pymongo import PyMongo
+import pymongo
+from bson import json_util
+import json
 
 app = Flask(__name__)
 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/ChessBras"
-mongodb_client = PyMongo(app)
-bd = mongodb_client.db
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+mydb = myclient["ChessBras"]
+mycol = mydb["users"]
 
 app.secret_key = "cbca765383981f152ef9319b17cae0109c511b7b3906732336e43cee66fbe7ad"
 
@@ -112,7 +114,11 @@ def authentification():
 
     motdepasse_hash = hashlib.sha512(motdepasse.encode()).hexdigest()
 
-    Compte = bd.users.find( {"email":courriel, "mdp":motdepasse_hash} )
+
+
+    compte = mycol.find_one("email":courriel, "mdp":motdepasse_hash)
+
+    compte = json.loads(json_util.dumps(compte))
 
     if Compte is None:
         return render_template('auth.html', \
@@ -159,7 +165,15 @@ def creation():
 
     if (len(message) == 0):
         motdepasse = hashlib.sha512(motdepasse.encode()).hexdigest()
-        compte = bd.db.users.insertOne( {"email":courriel, "mdp":motdepasse, "pays":"Canada", "nom":nom, "rang":0, "amis":[]} )
+
+        mydict = { "email": courriel, "mdp": motdepasse, "pays": "Canada", "nom":nom, "rang":0, "amis":[] }
+
+        x = mycol.insert_one(mydict)
+
+        compte = mycol.find_one(mydict)
+
+        compte = json.loads(json_util.dumps(compte))
+
         session['utilisateur'] = compte
         return redirect('/')
     flash(message)
