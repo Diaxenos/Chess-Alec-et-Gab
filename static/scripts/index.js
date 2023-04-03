@@ -142,21 +142,10 @@ function GetPossibleMoves(piece, position) {
     piece.position = position;
     console.log(piece);
     if (piece.type === "pawn") {
-        let diagonalMoves = [];
-        let number = Number(piece.position);
-        if (piece.color === 1 && document.getElementById(number + 1).childElementCount === 0) {
-            number += 1;
+        currentPiece.GetPossibleMoves();
+        for(let i = 0; i < piece.possible_moves.length; i++){
+            document.getElementById(piece.possible_moves[i]).classList.add('possibleMove');
         }
-        else if(piece.color === 0 && document.getElementById(number - 1).childElementCount === 0) {
-            number -= 1;
-        }
-        diagonalMoves = GetDiagonal(piece);
-        if(number != piece.position){
-            moves.push(number);
-        }
-        moves = moves.concat(diagonalMoves);
-        piece.possible_moves = moves;
-
     }
     //TODO: Rook : loop until it finds a piece or it reaches the end of the board
     if (piece.type === "rook") {
@@ -178,13 +167,13 @@ function GetPossibleMoves(piece, position) {
 function movePiece(e) {
     if (e.target.classList.contains('possibleMove')) {
         document.getElementById(currentPiece.position).children[0].remove();
-        currentPiece.position = e.target.parentElement.id;
+        currentPiece.position = e.target.id;
+        console.log(currentPiece);
         let img = document.createElement('img');
         img.id = currentPiece.id;
         img.src = currentPiece.img;
         e.target.append(img);
         document.querySelectorAll('.possibleMove').forEach(e => e.classList.remove('possibleMove'));
-
     }
 }
 

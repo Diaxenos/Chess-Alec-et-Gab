@@ -65,6 +65,21 @@ function validerCourriel(email_unique) {
     afficherValidation(txtCourriel, msg, divErreurCourriel);
 }
 
+function validerNomUtilisateur(nom_utilisateur_unique) {
+    let msg = "";
+    txtNomUtilisateur.value = txtNomUtilisateur.value.trim();
+
+    // Validation.
+    if (txtNomUtilisateur.value.length < 3) {
+        msg = "- Votre nom d'utilisateur doit contenir au moins 3 caractères.\n";
+    }
+    if (nom_utilisateur_unique['nom_utilisateur_unique'] == txtNomUtilisateur.value) {
+        msg = "- Nom d'utilisateur déjà prit.";
+    }
+
+    afficherValidation(txtNomUtilisateur, msg, divErreurNomUtilisateur);
+}
+
 /**
 * Appelée lors d'une erreur.
 */
@@ -105,6 +120,30 @@ function courriel() {
             url     : `/api/email_unique`,
             "data"  : parametres,                   // Sont envoyés en GET si aucune méthode n'est spécifiée
             success : validerCourriel,
+            error   : gererErreur
+        }
+    );
+ }
+
+ function nomUtilisateur() {
+
+    let nomUtilisateurChercher =  $("#nomUtilisateurCreate").val().trim();
+
+    if (clientHttp != null) {
+        // Annuler la requête précédente car on lancera une nouvelle requête
+        // à chaque input et on ne veut plus le résultat de la requête précédente.
+        clientHttp.abort();
+    }
+
+    const parametres = {
+        "nomUtilisateur": nomUtilisateurChercher
+    };
+
+    clientHttp = $.ajax(
+        {
+            url     : `/api/nom_utilisateur_unique`,
+            "data"  : parametres,                   // Sont envoyés en GET si aucune méthode n'est spécifiée
+            success : validerNomUtilisateur,
             error   : gererErreur
         }
     );
