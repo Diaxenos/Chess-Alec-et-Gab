@@ -3,6 +3,7 @@ import random
 from flask import Blueprint, abort, render_template, redirect, session, request,flash
 from datetime import datetime
 import os
+from api import bp_api
 from babel import numbers, dates
 from flask_babel import Babel
 import re
@@ -12,6 +13,8 @@ from bson import json_util
 import json
 
 app = Flask(__name__)
+
+app.register_blueprint(bp_api, url_prefix='/api')
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["ChessBras"]
@@ -434,6 +437,11 @@ def creation():
 def profil():
     '''Permet d'afficher la page de profil'''
     return render_template('profil.jinja')
+
+''' @app.route('/profil/modification', methods=["POST"])
+def modification(): '''
+
+
 
 
 if __name__ == '__main__':
