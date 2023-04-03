@@ -1,49 +1,30 @@
 'use strict'
-import {Pawn, Rook, Bishop, Queen, King, Knight} from "./Pieces.js"
+import { Pawn, Rook, Bishop, Queen, King, Knight } from "./Pieces.js"
 
-let currentId = null;
+let teamBlack = [];
+let teamWhite = [];
+
 let currentColor = null;
-let clickedPieceXY = null;
 let currentPiece = null;
+
 
 function AddPiece(piece, x, y, type) {
     let img;
     img = document.createElement('img');
     img.src = piece.img;
     img.id = type;
-    img.className = piece.CN;
+    piece.id = type;
+    img.className = type;
     let emplacement = document.getElementById(`${x}${y}`);
     emplacement.append(img);
-}
-
-function RemovePiece(piece_id) {
-    document.getElementById(piece_id).children[0].remove();
-}
-
-function MovePiece(e, c) {
-    switch (currentPiece) {
-        case "Pawn":
-            AddPiece(new Pawn(c), e.target.id[0], e.target.id[1], currentId);
-            break;
-        case "King":
-            AddPiece(new King(c), e.target.id[0], e.target.id[1], currentId);
-            break;
-        case "Knight":
-            AddPiece(new Knight(c), e.target.id[0], e.target.id[1], currentId);
-            break;
-        case "Queen":
-            AddPiece(new Queen(c), e.target.id[0], e.target.id[1], currentId);
-            break;
-        case "Rook":
-            AddPiece(new Rook(c), e.target.id[0], e.target.id[1], currentId);
-            break;
-        case "Bishop":
-            AddPiece(new Bishop(c), e.target.id[0], e.target.id[1], currentId);
-            break;
+    if (piece.color === 1) {
+        teamBlack.push(piece);
     }
-    RemovePiece(clickedPieceXY)
-
+    else {
+        teamWhite.push(piece);
+    }
 }
+
 
 function AddStartingPieces() {
     let rook1 = new Rook(1);
@@ -88,28 +69,123 @@ function AddStartingPieces() {
 AddStartingPieces();
 
 function GetPiece(e) {
-    let _id = e.target.id;
-    if (_id.substring(_id.length - 1) === "w") {
-        currentColor = 0;
-    } else if (_id.substring(_id.length - 1) === "b") {
-        currentColor = 1
-    }
-    let pieceNumber = _id.substring(
-        e.target.id.indexOf("_") + 1,
-        e.target.id.lastIndexOf("_")
-    )
 
-    if (e.target.tagName == "IMG") {
-        currentId = e.target.id;
-        clickedPieceXY = e.target.parentNode.id;
-        currentPiece = e.target.className;
-    } else if (clickedPieceXY != null && currentColor != null) {
-        MovePiece(e, currentColor);
-        clickedPieceXY = null;
-        currentPiece = null;
-        currentColor = null;
+    let position = e.target.parentElement.id;
+    if (e.target.tagName === "IMG") {
+        currentColor = String(e.target.id).split("_")[2];
+    }
+    if (currentColor === "b") {
+        for (let i = 0; i < teamBlack.length; i++) {
+            if (e.target.id === teamBlack[i].id) {
+                currentPiece = teamBlack[i];
+                GetPossibleMoves(currentPiece, position);
+            }
+        }
+    }
+    else if (currentColor === "w") {
+        for (let i = 0; i < teamWhite.length; i++) {
+            if (e.target.id === teamWhite[i].id) {
+                currentPiece = teamWhite[i];
+                GetPossibleMoves(currentPiece, position);
+            }
+        }
+    }
+    if (e.target.classList.contains('possibleMove')) {
+        movePiece(e);
+    }
+}
+function GetDiagonal(piece) {
+    let diagonalRight = null;
+    let diagonalLeft = null;
+    let number = Number(piece.position);
+    let advanceNumber = 0;
+    let diagonalMoves = [];
+    if (piece.color === 1) {
+        advanceNumber = 1;
+    }
+    else {
+        advanceNumber = -1;
+    }
+    try {
+        diagonalRight = document.getElementById(number + advanceNumber).nextElementSibling;
+        console.log(diagonalRight);
+    } catch (error) {
+        console.log('diagonal out of range')
+    }
+    try {
+        diagonalLeft = document.getElementById(number + advanceNumber).previousElementSibling;
+        console.log(diagonalLeft);
+    } catch (error) {
+        console.log('diagonal out of range')
+    }
+    if (diagonalRight !== null) {
+        if (diagonalRight.childElementCount != 0 && diagonalRight.children[0].id.split("_")[2] !== currentColor) {
+            diagonalMoves.push(diagonalRight.id);
+        }
+    }
+    if (diagonalLeft !== null) {
+        if (diagonalLeft.childElementCount != 0 && diagonalLeft.children[0].id.split("_")[2] !== currentColor) {
+            diagonalMoves.push(diagonalLeft.id);
+        }
+    }
+    return diagonalMoves;
+}
+
+function GetPossibleMoves(piece, position) {
+    if (currentPiece !== null) {
+        document.querySelectorAll('.possibleMove').forEach(e => e.classList.remove('possibleMove'));
+    }
+    else {
+        return;
+    }
+    let moves = [];
+    piece.position = position;
+    console.log(piece);
+    if (piece.type === "pawn") {
+        let diagonalMoves = [];
+        let number = Number(piece.position);
+        if (piece.color === 1 && document.getElementById(number + 1).childElementCount === 0) {
+            number += 1;
+        }
+        else if(piece.color === 0 && document.getElementById(number - 1).childElementCount === 0) {
+            number -= 1;
+        }
+        diagonalMoves = GetDiagonal(piece);
+        if(number != piece.position){
+            moves.push(number);
+        }
+        moves = moves.concat(diagonalMoves);
+        piece.possible_moves = moves;
+
+    }
+    //TODO: Rook : loop until it finds a piece or it reaches the end of the board
+    if (piece.type === "rook") {
+        let number = Number(piece.position);
+        let i = 0;
+        while (document.getElementById(number + i).childElementCount === 0) {
+            moves.push(number + i);
+            i++;
+        }
+    }
+
+    for (let i = 0; i < moves.length; i++) {
+        
+        document.getElementById(piece.possible_moves[i]).classList.add('possibleMove');
+
     }
 }
 
+function movePiece(e) {
+    if (e.target.classList.contains('possibleMove')) {
+        document.getElementById(currentPiece.position).children[0].remove();
+        currentPiece.position = e.target.parentElement.id;
+        let img = document.createElement('img');
+        img.id = currentPiece.id;
+        img.src = currentPiece.img;
+        e.target.append(img);
+        document.querySelectorAll('.possibleMove').forEach(e => e.classList.remove('possibleMove'));
 
-board.addEventListener('click', GetPiece, true)
+    }
+}
+
+board.addEventListener('click', GetPiece, true);

@@ -21,5 +21,25 @@
 }
 
 .pieceClicked{
-    border: 1px 1px 1px black;
+    border-top-width: 1px;
+    border-top-color: black;
+    border-right-width: 1px;
+    border-right-color: black;
+    border-left-width: 1px;
+    border-left-color: black;
+    border-bottom-width: 1px;
+    border-bottom-color: black;
+}
+
+img{
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.possibleMove{
+    border: 2px solid rgba(47, 203, 0, 0.616);
 }

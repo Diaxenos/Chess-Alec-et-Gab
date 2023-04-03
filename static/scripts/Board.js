@@ -5,7 +5,7 @@ const info = document.getElementById('info')
 for(let i = 0; i < 8; i++){
     //each line
     const line = document.createElement('div');
-    line.classList.add('line')
+    line.classList.add('line');
     line.id = i + 1;
     board.appendChild(line);
     for(let j = 0; j < 8; j++){
