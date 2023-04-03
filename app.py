@@ -9,7 +9,7 @@ from flask_babel import Babel
 import re
 import hashlib
 import pymongo
-from bson import json_util
+from bson import json_util, ObjectId
 import json
 
 app = Flask(__name__)
@@ -391,8 +391,7 @@ def creation():
     pays_selection = pays_selection.lower()
     message = ""
 
-    """ with bd.creer_connexion() as conn:
-        courriel_verif = bd.get_courriel(conn, courriel) """
+    courriel_verif = mycol.find_one({"email":courriel})
 
     if courriel =="" or nom=="" or motdepasse=="" or motdepasseconf=="":
         message+=" Information(s) manquante(s)"
@@ -400,7 +399,7 @@ def creation():
         message+=" Le courriel est invalide"
     """ if(re.search(regexMdp, motdepasse)) is None:
         message+=" Le mot de passe est invalide"""
-    """ if courriel_verif is not None:
+    if courriel_verif is not None:
         message+=" Ce courriel est déja utilisé. """
     if len(courriel) > 50:
         message+=" Le courriel est trop long"
@@ -410,12 +409,11 @@ def creation():
         message+=" Les mots de passes ne correspondent pas"
     if len(nom) > 50 or len(nom) < 3:
         message+=" Le nom est trop long ou trop court"
-    """ if (re.search(regex2, nom)) is None:
+    if (re.search(regex2, nom)) is None:
         message+=" Le nom est invalide """
-    """ with bd.creer_connexion() as conn:
-        nom_unique = bd.get_nom_unique(conn, nom)
-        if nom_unique != None:
-            message += "Le nom est déjà utilisé! """
+    nom_unique = mycol.find_one({"nom":nom})
+    if nom_unique != None:
+        message += "Le nom est déjà utilisé! """
 
     if (len(message) == 0):
         motdepasse = hashlib.sha512(motdepasse.encode()).hexdigest()
@@ -431,15 +429,70 @@ def creation():
         session['utilisateur'] = compte
         return redirect('/')
     flash(message)
-    return render_template('create.jinja')
+    return render_template('create.jinja', pays = pays)
 
 @app.route('/profil')
 def profil():
     '''Permet d'afficher la page de profil'''
     return render_template('profil.jinja')
 
-''' @app.route('/profil/modification', methods=["POST"])
-def modification(): '''
+@app.route('/profil/modification', methods=["POST"])
+def modification():
+    courriel = request.form.get("courriel", "")
+    motdepasse = request.form.get("password", "")
+    motdepasseconf = request.form.get("passwordConf", "")
+    nom = request.form.get("nom", "")
+
+    message = ""
+
+    courriel_verif = mycol.find_one({"email": courriel})
+
+    if courriel =="" or nom=="":
+        message+=" Information(s) manquante(s)"
+    if (re.search(regex1, courriel)) is None:
+        message+=" Le courriel est invalide <br/>"
+    """ if(re.search(regexMdp, motdepasse)) is None:
+        message+=" Le mot de passe est invalide"""
+    if len(courriel) > 50:
+        message+=" Le courriel est trop long <br/>"
+    if motdepasse != "":
+        if len(motdepasse) <= 8:
+            message+=" Le mot de passe est trop court <br/>"
+        if motdepasse != motdepasseconf:
+            message+=" Les mots de passes ne correspondent pas <br/>"
+    if len(nom) > 50 or len(nom) < 3:
+        message+=" Le nom est trop long ou trop court <br/>"
+    if (re.search(regex2, nom)) is None:
+        message+=" Le nom est invalide <br/>"
+    nom_unique = mycol.find_one({"nom":nom})
+    if nom_unique != None:
+        message += "Le nom est déjà utilisé! <br/>"
+
+    if (len(message) == 0):
+        motdepasse = hashlib.sha512(motdepasse.encode()).hexdigest()
+
+        mdpVerif = mycol.find_one({"mdp": motdepasse})
+
+        print(session['utilisateur']['_id']['$oid'])
+
+        if mdpVerif is not None:
+            mydict = mycol.find_one({"_id":ObjectId(session['utilisateur']['_id']['$oid'])})
+            compte = mycol.update_one({"_id":ObjectId(mydict['_id'])}, {"$set":{"email": courriel, "mdp": motdepasse, "nom":nom}})
+            ''' compte = json.loads(json_util.dumps(compte)) '''
+            session['utilisateur'] = compte
+            return redirect('/')
+        else:
+            mydict = mycol.find_one({"_id":ObjectId(session['utilisateur']['_id']['$oid'])})
+            print(mydict)
+            compte = mycol.update_one({"_id":ObjectId(mydict['_id'])}, {"$set":{"email": courriel, "mdp": session['utilisateur']['mdp'], "nom":nom}})
+            print(compte)
+            compte = json.loads(json_util.dumps(compte))
+            session['utilisateur'] = compte
+            return redirect('/')
+    flash(message)
+    return render_template('profil.jinja')
+
+
 
 
 

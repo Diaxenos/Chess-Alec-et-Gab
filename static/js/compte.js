@@ -53,12 +53,11 @@ function afficherValidation(champ, message, divErreur) {
 function validerCourriel(email_unique) {
     let msg = "";
     txtCourriel.value = txtCourriel.value.trim();
-
     // Validation.
     if (!regexCourriel.test(txtCourriel.value)) {
         msg = "- Votre courriel n'est pas valide.\n";
     }
-    if (email_unique['email_unique'] == txtCourriel.value) {
+    if (email_unique == txtCourriel.value) {
         msg = "- Courriel déjà prit.";
     }
 
