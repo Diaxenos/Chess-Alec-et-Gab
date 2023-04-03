@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.jinja" %}
 
 {% block content %}
 
@@ -33,6 +33,14 @@
             <input type="text" id="nomCreate" placeholder="Nom" class="form-control" name="nomCreate" required="true">
             <div id="msg-nom" class="invalid-feedback"></div>
         </div>
+        <div>
+            <select id="pays_selection" name="pays_selection">
+                {% for paysUnique in pays %}
+                    <option value="{{ paysUnique.code }}">{{ paysUnique.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
     </fieldset>
     <br>
     <button type="submit" class="btn btn-secondary">Créer</button>
