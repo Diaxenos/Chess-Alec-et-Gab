@@ -20,7 +20,8 @@ mycol = mydb["users"]
 def email_unique():
     '''Validation'''
     email = request.args.get('courriel', None)
-    email = mycol.find({"email":email})
-    if email:
+    email = mycol.find_one({"email":email})
+    if email is None:
         email = "Aucun";
-    return jsonify(email)
+        return jsonify(email)
+    return jsonify(email['email'])
