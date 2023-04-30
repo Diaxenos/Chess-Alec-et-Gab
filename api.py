@@ -25,3 +25,13 @@ def email_unique():
         email = "Aucun";
         return jsonify(email)
     return jsonify(email['email'])
+
+@bp_api.route('/nom_unique')
+def nom_unique():
+    '''Validation'''
+    nom_unique = request.args.get('nom', None)
+    nom_unique = mycol.find_one({"nom":nom_unique})
+    if(nom_unique is None):
+        nom_unique = "Aucun";
+        return jsonify(nom_unique)
+    return jsonify(nom_unique['nom'])

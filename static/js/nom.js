@@ -11,16 +11,16 @@ let clientHttp = null;
 let valide = true;
 
 // Champs
-let txtCourriel;
+let txtNom;
 
 // Messages d'erreurs
-let divErreurCourriel;
+let divErreurNom;
 
 // La couleur de base, orange, ne concordait pas avec le style du site.
 const couleurDivErreur = "red";
 
 // Regex
-const regexCourriel = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+const regexNom = /^[ a-zA-Zàâäéèêë-]+$/;
 
 /**
  * Permet d'afficher un message d'erreur d'un champ invalide.
@@ -50,79 +50,78 @@ function afficherValidation(champ, message, divErreur) {
 /**
  * Permet la validation du nom.
  */
-function validerCourriel(email_unique) {
+function validerNom(nom_unique) {
     let msg = "";
-    txtCourriel.value = txtCourriel.value.trim();
+    txtNom.value = txtNom.value.trim();
+
     // Validation.
-    if (!regexCourriel.test(txtCourriel.value)) {
-        msg = "- Votre courriel n'est pas valide.\n";
+    if (txtNom.value.length < 3 || txtNom.value.length > 50 || !regexNom.test(txtNom.value)) {
+        msg = "- Votre nom doit contenir entre 3 et 50 caractères et ne doit contenir que des lettres, des tirets et des espaces.\n";
     }
-    if (email_unique == txtCourriel.value) {
-        msg = "- Courriel déjà prit.";
+    if (nom_unique == txtNom.value) {
+        msg = "- Nom déjà prit.";
     }
 
-    afficherValidation(txtCourriel, msg, divErreurCourriel);
+    afficherValidation(txtNom, msg, divErreurNom);
 }
+
 
 /**
 * Appelée lors d'une erreur.
 */
 function gererErreur(client, textStatus, errorThrown) {
-    if (client.status == 0) {
-        console.log("Requête annulée"); // Donc tout est OK
-    } else {
-        $("#chargement").addClass("masquer");
-        console.error(`Erreur (code=${client.status}): ${textStatus}`);
-        if (errorThrown != null) {
-            console.error(errorThrown);
-        }
-        $("#erreur").text("Erreur lors de la requête. Veuillez réessayer.");
-    }
-    clientHttp = null;
- }
-
- /**
+   if (client.status == 0) {
+       console.log("Requête annulée"); // Donc tout est OK
+   } else {
+       $("#chargement").addClass("masquer");
+       console.error(`Erreur (code=${client.status}): ${textStatus}`);
+       if (errorThrown != null) {
+           console.error(errorThrown);
+       }
+       $("#erreur").text("Erreur lors de la requête. Veuillez réessayer.");
+   }
+   clientHttp = null;
+}
+/**
 * Fonction appelée pour tenter de récupérer et d'afficher les informations
 * d'une personne avec AJAX.
 */
-function courriel() {
+function nom() {
 
-    let courrielChercher =  $("#courrielCreate").val().trim();
+   let nomChercher =  $("#nomCreate").val().trim();
 
-    if (clientHttp != null) {
-        // Annuler la requête précédente car on lancera une nouvelle requête
-        // à chaque input et on ne veut plus le résultat de la requête précédente.
-        clientHttp.abort();
-    }
+   if (clientHttp != null) {
+       // Annuler la requête précédente car on lancera une nouvelle requête
+       // à chaque input et on ne veut plus le résultat de la requête précédente.
+       clientHttp.abort();
+   }
 
-    const parametres = {
-        "courriel": courrielChercher
-    };
+   const parametres = {
+       "nom": nomChercher
+   };
 
-    clientHttp = $.ajax(
-        {
-            url     : `/api/email_unique`,
-            "data"  : parametres,                   // Sont envoyés en GET si aucune méthode n'est spécifiée
-            success : validerCourriel,
-            error   : gererErreur
-        }
-    );
- }
-
-
- /**
+   clientHttp = $.ajax(
+       {
+           url     : `/api/nom_unique`,
+           "data"  : parametres,                   // Sont envoyés en GET si aucune méthode n'est spécifiée
+           success : validerNom,
+           error   : gererErreur
+       }
+   );
+}
+/**
  * Permet la validation du formulaire au complet.
  */
 function validerFormulaire() {
 
     valide = true;
 
-    validerCourriel();
+    validerNom();
 }
  /**
  * Permet la validation du nom à chaque input.
  */
- function envoyerFormulaire(evenement) {
+function envoyerFormulaire(evenement) {
     validerFormulaire();
     if (!valide) {
         evenement.preventDefault();
@@ -133,13 +132,13 @@ function validerFormulaire() {
  */
 function initialisation() {
     // Obtenir les champs
-    txtCourriel = document.getElementById("courrielCreate");
-    txtCourriel.addEventListener('change', courriel);
-    txtCourriel.addEventListener("blur", validerCourriel);
+    txtNom = document.getElementById("nomCreate");
+    txtNom.addEventListener('change', nom);
+    txtNom.addEventListener("blur", validerNom);
 
     // Obtenir les div des erreurs
-    divErreurCourriel = document.getElementById("msg-courriel");
-    divErreurCourriel.style.color = couleurDivErreur;
+    divErreurNom = document.getElementById("msg-nom");
+    divErreurNom.style.color = couleurDivErreur;
 
     formCompte = document.getElementById("form-compte");
     formCompte.addEventListener("submit", envoyerFormulaire, false);
