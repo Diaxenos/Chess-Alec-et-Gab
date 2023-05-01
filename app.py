@@ -19,6 +19,7 @@ app.register_blueprint(bp_api, url_prefix='/api')
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["ChessBras"]
 mycol = mydb["users"]
+myfriendscol = mydb["friends"]
 
 pays = [
   {"name": "Albania", "code": "AL"},
@@ -278,7 +279,6 @@ def main_app():  # put application's code here
 
     if(session.get('utilisateur') is None):
         session['utilisateur'] = None
-
     return render_template('game.jinja')
 
 @app.errorhandler(404)
@@ -316,18 +316,6 @@ def internal_server_error_403(_):
         message="ERREUR 403"
     ), 403
 
-@app.route('/visionner')
-def visionner():
-
-    liste_video = []
-    liste_video.append("https://www.youtube.com/watch?v=1WEyUZ1SpHY&ab_channel=ChessBaseIndia")
-    liste_video.append("https://www.youtube.com/watch?v=Vyp-xTLxRQ0&ab_channel=ChessBaseIndia")
-    liste_video.append("https://www.youtube.com/watch?v=RqACK5OmNPs&ab_channel=ChessStudio")
-    liste_video.append("https://www.youtube.com/watch?v=bdfBdw8EWF0&ab_channel=Chess.com")
-    liste_video.append("https://www.youtube.com/watch?v=e91M0XLX7Jw&ab_channel=Chess.com")
-
-    nombre = random.randint(0,len(liste_video))
-    return redirect(liste_video[nombre])
 
 regex1 = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 regex2 = re.compile(r'[a-z\-\s]+')
@@ -368,12 +356,12 @@ def authentification():
 
     motdepasse_hash = hashlib.sha512(motdepasse.encode()).hexdigest()
 
-    compte = mycol.find({"email":courriel, "mdp":motdepasse_hash})
-
+    compte = mycol.find_one({"email":courriel, "mdp":motdepasse_hash})
+    print(compte)
     if compte is None:
         return render_template('auth.jinja', \
             message="Compte introuvable ou mauvais mot de passe", courriel = courriel)
-    compte = json.loads(json_util.dumps(compte[0]))
+    compte = json.loads(json_util.dumps(compte))
 
     session['utilisateur'] = compte
 
@@ -464,37 +452,77 @@ def modification():
         message+=" Le nom est trop long ou trop court <br/>"
     if (re.search(regex2, nom)) is None:
         message+=" Le nom est invalide <br/>"
-    nom_unique = mycol.find_one({"nom":nom})
-    if nom_unique != None:
-        message += "Le nom est déjà utilisé! <br/>"
+    if nom != session['utilisateur']['nom']:
+        nom_unique = mycol.find_one({"nom":nom})
+        if nom_unique != None:
+            message += "Le nom est déjà utilisé! <br/>"
 
     if (len(message) == 0):
         motdepasse = hashlib.sha512(motdepasse.encode()).hexdigest()
-
         mdpVerif = mycol.find_one({"mdp": motdepasse})
 
         print(session['utilisateur']['_id']['$oid'])
 
-        if mdpVerif is not None:
+        if mdpVerif is None:
             mydict = mycol.find_one({"_id":ObjectId(session['utilisateur']['_id']['$oid'])})
-            compte = mycol.update_one({"_id":ObjectId(mydict['_id'])}, {"$set":{"email": courriel, "mdp": motdepasse, "nom":nom}})
-            ''' compte = json.loads(json_util.dumps(compte)) '''
+            id = mycol.update_one({"_id":ObjectId(mydict['_id'])}, {"$set":{"email": courriel, "mdp": motdepasse, "nom":nom}})
+            compte = mycol.find_one({"_id":ObjectId(mydict['_id'])})
+            compte = json.loads(json_util.dumps(compte))
             session['utilisateur'] = compte
-            return redirect('/')
+            flash(message)
+            return render_template('profil.jinja')
         else:
             mydict = mycol.find_one({"_id":ObjectId(session['utilisateur']['_id']['$oid'])})
             print(mydict)
-            compte = mycol.update_one({"_id":ObjectId(mydict['_id'])}, {"$set":{"email": courriel, "mdp": session['utilisateur']['mdp'], "nom":nom}})
-            print(compte)
+            id = mycol.update_one({"_id":ObjectId(mydict['_id'])}, {"$set":{"email": courriel, "mdp": session['utilisateur']['mdp'], "nom":nom}})
+            print(id)
+            compte = mycol.find_one({"_id":ObjectId(mydict['_id'])})
             compte = json.loads(json_util.dumps(compte))
             session['utilisateur'] = compte
-            return redirect('/')
-    flash(message)
-    return render_template('profil.jinja')
+            flash(message)
+            return render_template('profil.jinja')
 
+@app.route('/amis')
+def amis():  # put application's code here
+    list_friends = []
+    list_gens = []
+    # Prendre le premier id de cette objet pour trouver la personne
+    id1 = myfriendscol.find({"id_user":ObjectId(session['utilisateur']['_id']['$oid'])})
+    print(session['utilisateur']['_id']['$oid'])
+    print(id1)
+    # Prendre le deuxieme id de cette objet pour trouver la personne
+    id2 = myfriendscol.find({"id_friend":ObjectId(session['utilisateur']['_id']['$oid'])})
+    print(id2)
+    for friend in id1:
+        ami = mycol.find_one({"_id":ObjectId(friend['id_friend'])})
+        list_friends.append(ami)
+        print(ami)
+    for friend in id2:
+        ami = mycol.find_one({"_id":ObjectId(friend['id_user'])})
+        list_friends.append(ami)
+        print(ami)
+    notInFriends = mycol.find({"_id":{"$nin":[ObjectId(session['utilisateur']['_id']['$oid'])]}})
+    for personne in notInFriends:
+        list_gens.append(personne)
+    return render_template('amis.jinja', amis=list_friends, gens=list_gens)
 
+@app.route('/amis/ajouter/<id>')
+def ajouter(id):
+    print(id)
+    mydict = { "id_user": ObjectId(session['utilisateur']['_id']['$oid']), "id_friend": ObjectId(id) }
+    if myfriendscol.find_one(mydict) is None:
+        if id != session['utilisateur']['_id']['$oid']:
+            x = myfriendscol.insert_one(mydict)
+            print(x)
+    return redirect('/amis')
 
-
+@app.route('/amis/supprimer/<id>')
+def supprimer(id):
+    print(id)
+    mydict = { "id_user": ObjectId(session['utilisateur']['_id']['$oid']), "id_friend": ObjectId(id) }
+    x = myfriendscol.delete_one(mydict)
+    print(x)
+    return redirect('/amis')
 
 
 if __name__ == '__main__':
