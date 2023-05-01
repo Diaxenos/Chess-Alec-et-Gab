@@ -17,7 +17,7 @@ export class Piece {
     if (this.color === 0) return "w";
     else if (this.color === 1) return "b";
   }
-  HilightPossibleMoves() {
+  HighlightPossibleMoves() {
     try {
       for (const e of this.possible_moves) {
         let current = document.getElementById(e);
@@ -126,7 +126,7 @@ export class Pawn extends Piece {
       possMoves.push(diagonalMoves[i]);
     }
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Bishop extends Piece {
@@ -221,7 +221,7 @@ export class Bishop extends Piece {
       }
     }
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Rook extends Piece {
@@ -315,7 +315,7 @@ export class Rook extends Piece {
       }
     }
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class King extends Piece {
@@ -353,7 +353,7 @@ export class King extends Piece {
     possMoves.push(this.position - 11);
     possMoves.push(this.position - 9);
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Knight extends Piece {
@@ -377,7 +377,7 @@ export class Knight extends Piece {
     possMoves.push(this.position - 12);
     possMoves.push(this.position - 8);
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Queen extends Piece {
@@ -489,6 +489,6 @@ export class Queen extends Piece {
     }
     i = -11;
     max = false;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }

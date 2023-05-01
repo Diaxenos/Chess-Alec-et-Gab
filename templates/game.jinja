@@ -1,14 +1,9 @@
 {% extends 'base.jinja' %}
 {% block content %}
 <div class="container text-center d-flex justify-content-center">
+    <p id="timer_container" class="d-flex">
+    </p>
     <div id="board" class="board text-center">
-    </div>
-    <div id="timer">
-        <div id="timer-content" class="d-flex justify-content-center align-items-center">
-            <div id="timer-minutes" class="timer-minutes">10</div>
-            <div id="timer-separator" class="timer-separator">:</div>
-            <div id="timer-seconds" class="timer-seconds">00</div>
-        </div>
     </div>
     <div id="game-options" class="px-1 mx-1 bg-dark-subtle border-2 border-light rounded-2 border text-center">
         <form class="py-5">
@@ -21,20 +16,20 @@
                     </div>
                     <input type="range" class="form-range my-0" id="temps" />
                 </div>
-                
+
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="pieces_w" id="pieces_w" value="0">
+                    <input class="form-check-input" name="color" type="radio" id="pieces_w" value="0">
                     <label class="form-check-label" for="pieces_w">
                         Pieces blanches
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="pieces_b" id="pieces_b" value="1">
+                    <input class="form-check-input" name="color" type="radio" id="pieces_b" value="1">
                     <label class="form-check-label" for="pieces_b">
                         Pieces noires
                     </label>
                 </div>
-                <button type="button" id="new-game" class="btn btn-primary mt-5">Commencer!</button>
+                <button type="button" id="start" class="btn btn-primary mt-5">Commencer!</button>
             </div>
         </form>
     </div>
