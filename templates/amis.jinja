@@ -1,0 +1,34 @@
+{% extends 'base.jinja' %}
+{% block content %}
+
+<h2>Mes amis</h2>
+<table class="table table-hover">
+            <tbody>
+                {% if amis!=[] %}
+                    {% for ami in amis %}
+                        <tr class="table-active">
+                            <th scope="row">{{ami.nom}}</th>
+                            <td><a href="/amis/supprimer/{{ami._id}}" class="btn btn-danger">Supprimer</a></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="table-active">
+                        <th scope="row">Vous n'avez pas d'amis</th>
+                        <td></td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label for="recherche" class="form-label mt-4">Recherche : </label>
+            <input type="recherche" id="recherche" placeholder="Recherche" class="form-control" name="recherche">
+        </div>
+        <ul class="list-group">
+            {% for personne in gens %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{personne.nom}}
+                    <span class="badge bg-primary rounded-pill"><a href="/amis/ajouter/{{personne._id}}" style="color:white;">Ajouter</a></span>
+                </li>
+            {% endfor %}
+        </ul>
+{% endblock %}

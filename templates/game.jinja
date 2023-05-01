@@ -1,26 +1,5 @@
 {% extends 'base.jinja' %}
 {% block content %}
-<<<<<<< HEAD
-    <table class="table table-hover">
-    <h2>Amis</h2>
-    <thead>
-        <tr>
-            <th scope="col">Nom</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-        <tbody>
-            {% for ami in amis %}
-                <tr class="table-active">
-                    <th scope="row">{{ami.nom}}</th>
-                    <td>Bouton delete ami</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div class="container text-center d-flex justify-content-center">
-        <div id="board" class="board text-center">
-=======
 <div class="container text-center d-flex justify-content-center">
     <div id="board" class="board text-center">
     </div>
@@ -29,7 +8,6 @@
             <div id="timer-minutes" class="timer-minutes">10</div>
             <div id="timer-separator" class="timer-separator">:</div>
             <div id="timer-seconds" class="timer-seconds">00</div>
->>>>>>> bee0aa4de9b3fbfee961fa2067db306c9aa98b52
         </div>
     </div>
     <div id="game-options" class="px-1 mx-1 bg-dark-subtle border-2 border-light rounded-2 border text-center">
@@ -43,7 +21,7 @@
                     </div>
                     <input type="range" class="form-range my-0" id="temps" />
                 </div>
-                
+
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="pieces_w" id="pieces_w" value="0">
                     <label class="form-check-label" for="pieces_w">

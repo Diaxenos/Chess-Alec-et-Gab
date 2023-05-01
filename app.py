@@ -279,24 +279,7 @@ def main_app():  # put application's code here
 
     if(session.get('utilisateur') is None):
         session['utilisateur'] = None
-        return render_template('game.jinja')
-    else:
-        list_friends = []
-        # Prendre le premier id de cette objet pour trouver la personne
-        id1 = myfriendscol.find({"id_user":ObjectId(session['utilisateur']['_id']['$oid'])})
-        print(session['utilisateur']['_id']['$oid'])
-        print(id1)
-        # Prendre le deuxieme id de cette objet pour trouver la personne
-        id2 = myfriendscol.find({"id_friend":ObjectId(session['utilisateur']['_id']['$oid'])})
-        print(id2)
-        for friend in id1:
-            ami = mycol.find_one({"_id":ObjectId(friend['id_user'])})
-            list_friends.append(ami)
-        for friend in id2:
-            ami = mycol.find_one({"_id":ObjectId(friend['id_friend'])})
-            list_friends.append(ami)
-        print(list_friends)
-        return render_template('game.jinja', amis=list_friends)
+    return render_template('game.jinja')
 
 @app.errorhandler(404)
 def bad_request(_):
@@ -499,10 +482,47 @@ def modification():
             flash(message)
             return render_template('profil.jinja')
 
+@app.route('/amis')
+def amis():  # put application's code here
+    list_friends = []
+    list_gens = []
+    # Prendre le premier id de cette objet pour trouver la personne
+    id1 = myfriendscol.find({"id_user":ObjectId(session['utilisateur']['_id']['$oid'])})
+    print(session['utilisateur']['_id']['$oid'])
+    print(id1)
+    # Prendre le deuxieme id de cette objet pour trouver la personne
+    id2 = myfriendscol.find({"id_friend":ObjectId(session['utilisateur']['_id']['$oid'])})
+    print(id2)
+    for friend in id1:
+        ami = mycol.find_one({"_id":ObjectId(friend['id_friend'])})
+        list_friends.append(ami)
+        print(ami)
+    for friend in id2:
+        ami = mycol.find_one({"_id":ObjectId(friend['id_user'])})
+        list_friends.append(ami)
+        print(ami)
+    notInFriends = mycol.find({"_id":{"$nin":[ObjectId(session['utilisateur']['_id']['$oid'])]}})
+    for personne in notInFriends:
+        list_gens.append(personne)
+    return render_template('amis.jinja', amis=list_friends, gens=list_gens)
 
+@app.route('/amis/ajouter/<id>')
+def ajouter(id):
+    print(id)
+    mydict = { "id_user": ObjectId(session['utilisateur']['_id']['$oid']), "id_friend": ObjectId(id) }
+    if myfriendscol.find_one(mydict) is None:
+        if id != session['utilisateur']['_id']['$oid']:
+            x = myfriendscol.insert_one(mydict)
+            print(x)
+    return redirect('/amis')
 
-
-
+@app.route('/amis/supprimer/<id>')
+def supprimer(id):
+    print(id)
+    mydict = { "id_user": ObjectId(session['utilisateur']['_id']['$oid']), "id_friend": ObjectId(id) }
+    x = myfriendscol.delete_one(mydict)
+    print(x)
+    return redirect('/amis')
 
 
 if __name__ == '__main__':
