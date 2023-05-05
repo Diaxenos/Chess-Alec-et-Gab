@@ -8,12 +8,15 @@ let teamWhite = [];
 let currentTeam = null;
 let currentColor = null;
 let currentPiece = null;
+let playerColor = null;
 
 function StartGame(e) {
+  
   if(e.target.id !== "start"){
     return;
   }
-  let playerColor = document.querySelector('input[name="color"]:checked').value;
+  playerColor = document.querySelector('input[name="color"]:checked').value;
+
   console.log(playerColor);
   let player = new Player(Number(playerColor));
   console.log(player);
@@ -57,8 +60,8 @@ function AddStartingPiecesWhite() {
   AddPiece(knight2, 7, 1, "knight_2_b");
   AddPiece(bishop1, 3, 1, "bishop_1_b");
   AddPiece(bishop2, 6, 1, "bishop_2_b");
-  AddPiece(queen, 4, 1, "queen_b");
-  AddPiece(king, 5, 1, "king_b");
+  AddPiece(queen, 4, 1, "queen_0_b");
+  AddPiece(king, 5, 1, "king_0_b");
 
   for (let i = 0; i < 8; i++) {
     AddPiece(new Pawn(1), i + 1, 2, `pawn_${i}_b`);
@@ -78,8 +81,8 @@ function AddStartingPiecesWhite() {
   AddPiece(knight2_w, 7, 8, "knight_2_w");
   AddPiece(bishop1_w, 3, 8, "bishop_1_w");
   AddPiece(bishop2_w, 6, 8, "bishop_2_w");
-  AddPiece(queen_w, 4, 8, "queen_w");
-  AddPiece(king_w, 5, 8, "king_w");
+  AddPiece(queen_w, 4, 8, "queen_0_w");
+  AddPiece(king_w, 5, 8, "king_0_w");
 }
 
 function AddStartingPiecesBlack() {
@@ -154,11 +157,33 @@ function kill(piece){
 }
 
 function GetPiece(e) {
+  if(playerColor === "0"){
+    currentColor = "w";
+  }else{
+    currentColor = "b";
+  }
 
   if(currentPiece !== null && currentPiece.id !== e.target.id){
     document.querySelectorAll(".possible_move").forEach((element) => {
       element.classList.remove("possible_move");
     });
+    if(e.target.id.split("_")[2] === currentColor || e.target.id.split("_")[1] === currentColor){
+      if (currentColor === "b") {
+        currentTeam = teamBlack;
+        for (let i = 0; i < teamBlack.length; i++) {
+          if (e.target.id === teamBlack[i].id) {
+            currentPiece = teamBlack[i];
+          }
+        }
+      } else if (currentColor === "w") {
+        currentTeam = teamWhite;
+        for (let i = 0; i < teamWhite.length; i++) {
+          if (e.target.id === teamWhite[i].id) {
+            currentPiece = teamWhite[i];
+          }
+        }
+      }
+    }
   }
   else if (e.target.tagName === "IMG") {
     if (currentColor === "b") {
@@ -177,6 +202,7 @@ function GetPiece(e) {
       }
     }
   }
+  console.log(currentPiece);
   currentPiece.GetPossibleMoves();
   if (
     e.target.classList.contains("possible_move") ||
@@ -244,5 +270,5 @@ function startTimer(t){
   }, 1000);
 }
 
-board.addEventListener("click", GetPiece, true);
 gameOptions.addEventListener("click", StartGame, true);
+board.addEventListener("click", GetPiece, true);
