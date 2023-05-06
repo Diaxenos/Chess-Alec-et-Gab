@@ -1,6 +1,17 @@
 "use strict";
-import { Pawn, Rook, Bishop, Queen, King, Knight } from "./Pieces.js";
-import { Player } from "./player.js";
+import {
+  Pawn,
+  Rook,
+  Bishop,
+  Queen,
+  King,
+  Knight
+} from "./Pieces.js";
+
+import {
+  Player
+} from "./player.js";
+
 const gameOptions = document.querySelector('#game-options');
 let time = 0;
 let teamBlack = [];
@@ -9,10 +20,11 @@ let currentTeam = null;
 let currentColor = null;
 let currentPiece = null;
 let playerColor = null;
+let oponentColor = null;
 
 function StartGame(e) {
-  
-  if(e.target.id !== "start"){
+
+  if (e.target.id !== "start") {
     return;
   }
   playerColor = document.querySelector('input[name="color"]:checked').value;
@@ -126,48 +138,50 @@ function AddStartingPiecesBlack() {
   AddPiece(queen_w, 4, 8, "queen_b");
   AddPiece(king_w, 5, 8, "king_b");
 }
+
 function AddStartingPieces(player) {
   console.log(player.color);
-  if(player.color === 0){
+  if (player.color === 0) {
     AddStartingPiecesWhite();
-  }
-  else{
+  } else {
     AddStartingPiecesBlack();
   }
 };
+
 function UpdatePositions(team) {
   team.forEach(piece => {
-    if(document.getElementById(piece.id) !== null){
+    if (document.getElementById(piece.id) !== null) {
       piece.position = Number(document.getElementById(piece.id).parentElement.id);
     }
   });
 }
 
-function kill(piece){
-  for(let i = 0; i < teamBlack.length; i++){
-    if(teamBlack[i].id === piece.id){
+function kill(piece) {
+  for (let i = 0; i < teamBlack.length; i++) {
+    if (teamBlack[i].id === piece.id) {
       teamBlack.splice(i, 1);
     }
   }
-  for(let i = 0; i < teamWhite.length; i++){
-    if(teamWhite[i].id === piece.id){
+  for (let i = 0; i < teamWhite.length; i++) {
+    if (teamWhite[i].id === piece.id) {
       teamWhite.splice(i, 1);
     }
   }
 }
 
 function GetPiece(e) {
-  if(playerColor === "0"){
+  console.log(currentColor);
+  if (playerColor === "0") {
     currentColor = "w";
-  }else{
+  } else {
     currentColor = "b";
   }
 
-  if(currentPiece !== null && currentPiece.id !== e.target.id){
+  if (currentPiece !== null && currentPiece.id !== e.target.id) {
     document.querySelectorAll(".possible_move").forEach((element) => {
       element.classList.remove("possible_move");
     });
-    if(e.target.id.split("_")[2] === currentColor || e.target.id.split("_")[1] === currentColor){
+    if (e.target.id.split("_")[2] === currentColor || e.target.id.split("_")[1] === currentColor) {
       if (currentColor === "b") {
         currentTeam = teamBlack;
         for (let i = 0; i < teamBlack.length; i++) {
@@ -184,8 +198,7 @@ function GetPiece(e) {
         }
       }
     }
-  }
-  else if (e.target.tagName === "IMG") {
+  } else if (e.target.tagName === "IMG") {
     if (currentColor === "b") {
       currentTeam = teamBlack;
       for (let i = 0; i < teamBlack.length; i++) {
@@ -209,7 +222,9 @@ function GetPiece(e) {
     e.target.parentElement.classList.contains("possible_move")
   ) {
     movePiece(e);
+
   }
+  console.log(currentColor);
 }
 
 function movePiece(e) {
@@ -243,9 +258,11 @@ function movePiece(e) {
     element.classList.remove("possible_move");
   });
   UpdatePositions(currentTeam);
+  changeTurns();
+
 }
 
-function startTimer(t){
+function startTimer(t) {
 
   let seconds = document.createElement("p");
   let minutes = document.createElement("p");
@@ -260,7 +277,7 @@ function startTimer(t){
   seconds = 1;
   minutes = 10;
   setInterval(() => {
-    if(seconds === 0){
+    if (seconds === 0) {
       minutes--;
       seconds = 60;
     }
@@ -268,6 +285,10 @@ function startTimer(t){
     document.getElementById("seconds").innerHTML = seconds;
     document.getElementById("minutes").innerHTML = minutes;
   }, 1000);
+}
+
+function changeTurns() {
+  playerColor = (playerColor === "0") ? "1" : "0";
 }
 
 gameOptions.addEventListener("click", StartGame, true);
