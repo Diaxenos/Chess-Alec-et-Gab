@@ -21,6 +21,7 @@ let currentTeam = null;
 let currentColor = null;
 let currentPiece = null;
 let playerColor = null;
+let turnEnd = false;
 
 function StartGame(e) {
 
@@ -158,6 +159,7 @@ function UpdatePositions(team) {
       piece.position = Number(document.getElementById(piece.id).parentElement.id);
     }
   });
+  turnEnd = false;
 }
 
 function kill(piece) {
@@ -172,28 +174,32 @@ function kill(piece) {
     }
   }
 }
+function GetColor(pieceColor){
+  if (pieceColor === "w") {
+    return 0;
+  }
+  else if (pieceColor === "b") {
+    return 1;
+  }
+}
 
 function GetPiece(e) {
-  if(currentColor == 0){
-    currentColor = "w";
+  if(turnEnd && GetColor(e.target.id.split("_")[2]) != currentColor){
+    currentColor = GetColor(e.target.id.split("_")[2]);
   }
-  else{
-    currentColor = "b";
-  }
-  console.log(currentColor);
   if (currentPiece !== null && currentPiece.id !== e.target.id) {
     document.querySelectorAll(".possible_move").forEach((element) => {
       element.classList.remove("possible_move");
     });
-    if (e.target.id.split("_")[2] === currentColor || e.target.id.split("_")[1] === currentColor) {
-      if (currentColor === "b") {
+    if (GetColor(e.target.id.split("_")[2]) === currentColor || GetColor(e.target.id.split("_")[1]) === currentColor) {
+      if (currentColor === 1) {
         currentTeam = teamBlack;
         for (let i = 0; i < teamBlack.length; i++) {
           if (e.target.id === teamBlack[i].id) {
             currentPiece = teamBlack[i];
           }
         }
-      } else if (currentColor === "w") {
+      } else if (currentColor === 0) {
         currentTeam = teamWhite;
         for (let i = 0; i < teamWhite.length; i++) {
           if (e.target.id === teamWhite[i].id) {
@@ -203,18 +209,20 @@ function GetPiece(e) {
       }
     }
   } else if (e.target.tagName === "IMG") {
-    if (currentColor === "b") {
+    if (currentColor === 1) {
       currentTeam = teamBlack;
       for (let i = 0; i < teamBlack.length; i++) {
         if (e.target.id === teamBlack[i].id) {
           currentPiece = teamBlack[i];
+          break;
         }
       }
-    } else if (currentColor === "w") {
+    } else if (currentColor === 0) {
       currentTeam = teamWhite;
       for (let i = 0; i < teamWhite.length; i++) {
         if (e.target.id === teamWhite[i].id) {
           currentPiece = teamWhite[i];
+          break;
         }
       }
     }
@@ -226,7 +234,6 @@ function GetPiece(e) {
     e.target.parentElement.classList.contains("possible_move")
   ) {
     movePiece(e);
-
   }
   console.log(currentColor);
 }
@@ -239,7 +246,7 @@ function movePiece(e) {
 
   if (
     e.target.parentElement.classList.contains("possible_move") &&
-    String(e.target.id).split("_")[2] !== currentColor
+    GetColor(e.target.id.split("_")[2]) != currentColor
   ) {
     let newPosition = Number(e.target.parentElement.id);
     kill(e.target);
@@ -252,6 +259,7 @@ function movePiece(e) {
   } else if (e.target.classList.contains("possible_move")) {
     console.log(e.target);
     document.getElementById(currentPiece.position).firstChild.remove();
+    turnEnd = true;
     console.log("POSITION:" + currentPiece.position);
     currentPiece.position = Number(e.target.id);
     currentPiece.hasMoved = true;
@@ -292,7 +300,14 @@ function startTimer(t) {
 }
 
 function changeTurns() {
-  playerColor = (playerColor === "0") ? "1" : "0";
+  if (currentColor === 0) {
+    currentColor = 1;
+    currentTeam = teamBlack;
+  } else if (currentColor === 1) {
+    currentColor = 0;
+    currentTeam = teamWhite;
+  }
+  console.log("Current color : " + currentColor);
 }
 
 gameOptions.addEventListener("click", StartGame, true);
