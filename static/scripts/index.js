@@ -1,19 +1,10 @@
 "use strict";
 //import e from "express";
-import {
-  Pawn,
-  Rook,
-  Bishop,
-  Queen,
-  King,
-  Knight
-} from "./Pieces.js";
+import { Pawn, Rook, Bishop, Queen, King, Knight } from "./Pieces.js";
 
-import {
-  Player as player
-} from "./player.js";
+import { Player as player } from "./player.js";
 
-const gameOptions = document.querySelector('#game-options');
+const gameOptions = document.querySelector("#game-options");
 let time = 0;
 let teamBlack = [];
 let teamWhite = [];
@@ -24,7 +15,6 @@ let playerColor = null;
 let turnEnd = false;
 
 function StartGame(e) {
-
   if (e.target.id !== "start") {
     return;
   }
@@ -45,10 +35,9 @@ function AddPiece(piece, x, y, type) {
   piece.id = type;
   piece.position = Number(`${x}${y}`);
   img.className = type;
-  if(piece.color == player.color){
+  if (piece.color == player.color) {
     piece.playerOwned = true;
-  }
-  else{
+  } else {
     piece.playerOwned = false;
   }
   let emplacement = document.getElementById(piece.position);
@@ -106,42 +95,42 @@ function AddStartingPiecesWhite() {
 function AddStartingPiecesBlack() {
   currentTeam = teamBlack;
   currentColor = 1;
-  let rook1 = new Rook(0);
-  let rook2 = new Rook(0);
-  let knight1 = new Knight(0);
-  let knight2 = new Knight(0);
-  let bishop1 = new Bishop(0);
-  let bishop2 = new Bishop(0);
-  let queen = new Queen(0);
-  let king = new King(0);
-  AddPiece(rook1, 1, 1, "rook_1_w");
-  AddPiece(rook2, 8, 1, "rook_2_w");  
-  if (playerColor === "0") {
-    currentColor = "w";
-  } else {
-    currentColor = "b";
-  }
-
+  let rook1_w = new Rook(0);
+  let rook2_w = new Rook(0);
+  let knight1_w = new Knight(0);
+  let knight2_w = new Knight(0);
+  let bishop1_w = new Bishop(0);
+  let bishop2_w = new Bishop(0);
+  let queen_w = new Queen(0);
+  let king_w = new King(0);
+  AddPiece(rook1_w, 1, 1, "rook_1_w");
+  AddPiece(rook2_w, 8, 1, "rook_2_w");
+  AddPiece(knight1_w, 2, 1, "knight_1_w");
+  AddPiece(knight2_w, 7, 1, "knight_2_w");
+  AddPiece(bishop1_w, 3, 1, "bishop_1_w");
+  AddPiece(bishop2_w, 6, 1, "bishop_2_w");
+  AddPiece(queen_w, 4, 1, "queen_0_w");
+  AddPiece(king_w, 5, 1, "king_0_w");
   for (let i = 0; i < 8; i++) {
-    AddPiece(new Pawn(0), i + 1, 2, `pawn_${i}_w`);
     AddPiece(new Pawn(1), i + 1, 7, `pawn_${i}_b`);
+    AddPiece(new Pawn(0), i + 1, 2, `pawn_${i}_w`);
   }
-  let rook1_w = new Rook(1);
-  let rook2_w = new Rook(1);
-  let knight1_w = new Knight(1);
-  let knight2_w = new Knight(1);
-  let bishop1_w = new Bishop(1);
-  let bishop2_w = new Bishop(1);
-  let queen_w = new Queen(1);
-  let king_w = new King(1);
-  AddPiece(rook1_w, 1, 8, "rook_1_b");
-  AddPiece(rook2_w, 8, 8, "rook_2_b");
-  AddPiece(knight1_w, 2, 8, "knight_1_b");
-  AddPiece(knight2_w, 7, 8, "knight_2_b");
-  AddPiece(bishop1_w, 3, 8, "bishop_1_b");
-  AddPiece(bishop2_w, 6, 8, "bishop_2_b");
-  AddPiece(queen_w, 4, 8, "queen_b");
-  AddPiece(king_w, 5, 8, "king_b");
+  let rook1 = new Rook(1);
+  let rook2 = new Rook(1);
+  let knight1 = new Knight(1);
+  let knight2 = new Knight(1);
+  let bishop1 = new Bishop(1);
+  let bishop2 = new Bishop(1);
+  let queen = new Queen(1);
+  let king = new King(1);
+  AddPiece(rook1, 1, 8, "rook_1_b");
+  AddPiece(rook2, 8, 8, "rook_2_b");
+  AddPiece(knight1, 2, 8, "knight_1_b");
+  AddPiece(knight2, 7, 8, "knight_2_b");
+  AddPiece(bishop1, 3, 8, "bishop_1_b");
+  AddPiece(bishop2, 6, 8, "bishop_2_b");
+  AddPiece(queen, 4, 8, "queen_0_b");
+  AddPiece(king, 5, 8, "king_0_b");
 }
 
 function AddStartingPieces(player) {
@@ -151,12 +140,14 @@ function AddStartingPieces(player) {
   } else {
     AddStartingPiecesBlack();
   }
-};
+}
 
 function UpdatePositions(team) {
-  team.forEach(piece => {
+  team.forEach((piece) => {
     if (document.getElementById(piece.id) !== null) {
-      piece.position = Number(document.getElementById(piece.id).parentElement.id);
+      piece.position = Number(
+        document.getElementById(piece.id).parentElement.id
+      );
     }
   });
   turnEnd = false;
@@ -174,24 +165,26 @@ function kill(piece) {
     }
   }
 }
-function GetColor(pieceColor){
+function GetColor(pieceColor) {
   if (pieceColor === "w") {
     return 0;
-  }
-  else if (pieceColor === "b") {
+  } else if (pieceColor === "b") {
     return 1;
   }
 }
 
 function GetPiece(e) {
-  if(turnEnd && GetColor(e.target.id.split("_")[2]) != currentColor){
+  if (turnEnd && GetColor(e.target.id.split("_")[2]) != currentColor) {
     currentColor = GetColor(e.target.id.split("_")[2]);
   }
   if (currentPiece !== null && currentPiece.id !== e.target.id) {
     document.querySelectorAll(".possible_move").forEach((element) => {
       element.classList.remove("possible_move");
     });
-    if (GetColor(e.target.id.split("_")[2]) === currentColor || GetColor(e.target.id.split("_")[1]) === currentColor) {
+    if (
+      GetColor(e.target.id.split("_")[2]) === currentColor ||
+      GetColor(e.target.id.split("_")[1]) === currentColor
+    ) {
       if (currentColor === 1) {
         currentTeam = teamBlack;
         for (let i = 0; i < teamBlack.length; i++) {
@@ -250,7 +243,7 @@ function movePiece(e) {
   ) {
     let newPosition = Number(e.target.parentElement.id);
     kill(e.target);
-    e.target.remove()
+    e.target.remove();
     document.getElementById(currentPiece.position).firstChild.remove();
     currentPiece.hasMoved = true;
     document.getElementById(newPosition).append(movedImg);
@@ -271,11 +264,9 @@ function movePiece(e) {
   });
   UpdatePositions(currentTeam);
   changeTurns();
-
 }
 
 function startTimer(t) {
-
   let seconds = document.createElement("p");
   let minutes = document.createElement("p");
   let divider = document.createElement("p");
