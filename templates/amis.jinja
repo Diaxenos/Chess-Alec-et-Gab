@@ -21,7 +21,8 @@
         </table>
         <div class="form-group">
             <label for="recherche" class="form-label mt-4">Recherche : </label>
-            <input type="recherche" id="recherche" placeholder="Recherche" class="form-control" name="recherche">
+            <input type="recherche" id="rechercheCreate" placeholder="recherche" class="form-control" name="rechercheCreate">
+            <div id="msg-recherche" class="invalid-feedback"></div>
         </div>
         <ul class="list-group">
             {% for personne in gens %}
@@ -31,4 +32,10 @@
                 </li>
             {% endfor %}
         </ul>
+<script defer="defer"
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+<script defer="defer"
+        src="/static/js/recherche.js"></script>
 {% endblock %}
