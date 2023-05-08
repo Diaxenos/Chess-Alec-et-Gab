@@ -35,3 +35,13 @@ def nom_unique():
         nom_unique = "Aucun";
         return jsonify(nom_unique)
     return jsonify(nom_unique['nom'])
+
+@bp_api.route('/recherche')
+def libelle_unique():
+    '''Validation'''
+    recherche = request.args.get('recherche', None)
+    recherche = mycol.find({"recherche": {"$regex": recherche}})
+    if(recherche is None):
+        recherche = "Aucun";
+        return jsonify(recherche)
+    return jsonify(recherche['recherche'])

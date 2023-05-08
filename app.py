@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 app.register_blueprint(bp_api, url_prefix='/api')
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+myclient = pymongo.MongoClient("mongodb+srv://diaxenos:123soleil@cluster0.ibqvxjq.mongodb.net/")
 mydb = myclient["ChessBras"]
 mycol = mydb["users"]
 myfriendscol = mydb["friends"]
