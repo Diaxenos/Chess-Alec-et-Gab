@@ -17,7 +17,7 @@ export class Piece {
     if (this.color === 0) return "w";
     else if (this.color === 1) return "b";
   }
-  HilightPossibleMoves() {
+  HighlightPossibleMoves() {
     try {
       for (const e of this.possible_moves) {
         let current = document.getElementById(e);
@@ -35,6 +35,146 @@ export class Piece {
     } catch (error) {
       console.log(error);
     }
+  }
+  AddMovesRook() {
+    let possMoves = [];
+    let i = 10;
+    let max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i += 10;
+      } else {
+        max = true;
+      }
+    }
+    i = -10;
+    max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i -= 10;
+      } else {
+        max = true;
+      }
+    }
+    i = 1;
+    max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i += 1;
+      } else {
+        max = true;
+      }
+    }
+    i = -1;
+    max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i -= 1;
+      } else {
+        max = true;
+      }
+    }
+    return possMoves;
+  }
+
+  AddMovesBishop() {
+
+    let possMoves = [];
+    let i = 11;
+    let max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i += 11;
+      } else {
+        max = true;
+      }
+    }
+    i = 9;
+    max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i += 9;
+      } else {
+        max = true;
+      }
+    }
+    i = -11;
+    max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i -= 11;
+      } else {
+        max = true;
+      }
+    }
+    i = -9;
+    max = false;
+    while (!max) {
+      if (this.AssertPossibleMove(this.position + i)) {
+        possMoves.push(this.position + i);
+        try {
+          if (document.getElementById(this.position + i).childElementCount == 1)
+            max = true;
+        } catch (error) {
+          console.log(error);
+        }
+        i -= 9;
+      } else {
+        max = true;
+      }
+    }
+    this.possible_moves = possMoves;
+    this.HighlightPossibleMoves();
+    return possMoves;
   }
 }
 export class Pawn extends Piece {
@@ -103,7 +243,7 @@ export class Pawn extends Piece {
 
     if (
       document.getElementById(this.position + advanceNumber).childNodes
-        .length != 0
+      .length != 0
     ) {
       console.log("blocked");
       blocked = true;
@@ -113,9 +253,9 @@ export class Pawn extends Piece {
     if (
       (!this.hasMoved &&
         !document.getElementById(this.position + advanceNumber * 2)
-          .hasChildNodes) ||
+        .hasChildNodes) ||
       document.getElementById(this.position + advanceNumber).childNodes
-        .length != 0
+      .length != 0
     ) {
       console.log("blocked");
       blocked = true;
@@ -126,7 +266,7 @@ export class Pawn extends Piece {
       possMoves.push(diagonalMoves[i]);
     }
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Bishop extends Piece {
@@ -155,73 +295,9 @@ export class Bishop extends Piece {
     return false;
   }
   GetPossibleMoves() {
-    let possMoves = [];
-    let i = 11;
-    let max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i += 11;
-      } else {
-        max = true;
-      }
-    }
-    i = 9;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i += 9;
-      } else {
-        max = true;
-      }
-    }
-    i = -11;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i -= 11;
-      } else {
-        max = true;
-      }
-    }
-    i = -9;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i -= 9;
-      } else {
-        max = true;
-      }
-    }
+    let possMoves = this.AddMovesBishop();
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Rook extends Piece {
@@ -249,73 +325,9 @@ export class Rook extends Piece {
     return false;
   }
   GetPossibleMoves() {
-    let possMoves = [];
-    let i = 10;
-    let max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i += 10;
-      } else {
-        max = true;
-      }
-    }
-    i = -10;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i -= 10;
-      } else {
-        max = true;
-      }
-    }
-    i = 1;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i += 1;
-      } else {
-        max = true;
-      }
-    }
-    i = -1;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i -= 1;
-      } else {
-        max = true;
-      }
-    }
+    let possMoves = this.AddMovesRook();
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class King extends Piece {
@@ -353,7 +365,7 @@ export class King extends Piece {
     possMoves.push(this.position - 11);
     possMoves.push(this.position - 9);
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Knight extends Piece {
@@ -377,7 +389,7 @@ export class Knight extends Piece {
     possMoves.push(this.position - 12);
     possMoves.push(this.position - 8);
     this.possible_moves = possMoves;
-    this.HilightPossibleMoves();
+    this.HighlightPossibleMoves();
   }
 }
 export class Queen extends Piece {
@@ -396,7 +408,7 @@ export class Queen extends Piece {
       if (current.childElementCount == 0) {
         return true;
       } else if (
-        this.position.children[0].id.split("_")[1] !== this.GetColor() &&
+        current.children[0].id.split("_")[1] !== this.GetColor() &&
         current.childElementCount == 1
       ) {
         return true;
@@ -405,90 +417,12 @@ export class Queen extends Piece {
     return false;
   }
   GetPossibleMoves() {
-    let possMoves = [];
-    let i = 10;
-    let max = false;
-    console.log(document.getElementById(this.position).children[0].id.split("_")[1]);
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i += 10;
-      } else {
-        max = true;
-      }
+    let possMoves = this.AddMovesRook();
+    let possMoves2 = this.AddMovesBishop();
+    for (let i = 0; i < possMoves2.length; i++) {
+      possMoves.push(possMoves2[i]);
     }
-    i = -10;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i -= 10;
-      } else {
-        max = true;
-      }
-    }
-    i = 1;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i += 1;
-      } else {
-        max = true;
-      }
-    }
-    i = -1;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i -= 1;
-      } else {
-        max = true;
-      }
-    }
-    i = 11;
-    max = false;
-    while (!max) {
-      if (this.AssertPossibleMove(this.position + i)) {
-        possMoves.push(this.position + i);
-        try {
-          if (document.getElementById(this.position + i).childElementCount == 1)
-            max = true;
-        } catch (error) {
-          console.log(error);
-        }
-        i += 11;
-      } else {
-        max = true;
-      }
-    }
-    i = -11;
-    max = false;
-    this.HilightPossibleMoves();
+    this.possible_moves = possMoves;
+    this.HighlightPossibleMoves();
   }
 }

@@ -1,11 +1,20 @@
 'use strict'
-import {Piece, Pawn, Rook, Bishop, Queen, King, Knight} from "./Pieces.js"
+import {
+    Piece,
+    Pawn,
+    Rook,
+    Bishop,
+    Queen,
+    King,
+    Knight
+} from "./Pieces.js"
 
-export class Player{
+export class Player {
+    can_play;
     pieces_left;
-    player_color;
+    color;
 
-    constructor(player_color) {
-        this.player_color = player_color;
+    constructor(c) {
+        this.color = c;
     }
 }
