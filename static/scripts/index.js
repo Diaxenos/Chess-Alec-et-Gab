@@ -1,4 +1,5 @@
 "use strict";
+//import e from "express";
 import {
   Pawn,
   Rook,
@@ -9,7 +10,7 @@ import {
 } from "./Pieces.js";
 
 import {
-  Player
+  Player as player
 } from "./player.js";
 
 const gameOptions = document.querySelector('#game-options');
@@ -20,7 +21,6 @@ let currentTeam = null;
 let currentColor = null;
 let currentPiece = null;
 let playerColor = null;
-let oponentColor = null;
 
 function StartGame(e) {
 
@@ -28,9 +28,7 @@ function StartGame(e) {
     return;
   }
   playerColor = document.querySelector('input[name="color"]:checked').value;
-
-  console.log(playerColor);
-  let player = new Player(Number(playerColor));
+  player.color = playerColor;
   console.log(player);
   gameOptions.style.display = "none";
   AddStartingPieces(player);
@@ -46,6 +44,12 @@ function AddPiece(piece, x, y, type) {
   piece.id = type;
   piece.position = Number(`${x}${y}`);
   img.className = type;
+  if(piece.color == player.color){
+    piece.playerOwned = true;
+  }
+  else{
+    piece.playerOwned = false;
+  }
   let emplacement = document.getElementById(piece.position);
   emplacement.append(img);
   if (piece.color === 1) {
@@ -53,6 +57,7 @@ function AddPiece(piece, x, y, type) {
   } else {
     teamWhite.push(piece);
   }
+  console.log(piece);
 }
 
 function AddStartingPiecesWhite() {
@@ -109,13 +114,12 @@ function AddStartingPiecesBlack() {
   let queen = new Queen(0);
   let king = new King(0);
   AddPiece(rook1, 1, 1, "rook_1_w");
-  AddPiece(rook2, 8, 1, "rook_2_w");
-  AddPiece(knight1, 2, 1, "knight_1_w");
-  AddPiece(knight2, 7, 1, "knight_2_w");
-  AddPiece(bishop1, 3, 1, "bishop_1_w");
-  AddPiece(bishop2, 6, 1, "bishop_2_w");
-  AddPiece(queen, 4, 1, "queen_w");
-  AddPiece(king, 5, 1, "king_w");
+  AddPiece(rook2, 8, 1, "rook_2_w");  
+  if (playerColor === "0") {
+    currentColor = "w";
+  } else {
+    currentColor = "b";
+  }
 
   for (let i = 0; i < 8; i++) {
     AddPiece(new Pawn(0), i + 1, 2, `pawn_${i}_w`);
@@ -141,7 +145,7 @@ function AddStartingPiecesBlack() {
 
 function AddStartingPieces(player) {
   console.log(player.color);
-  if (player.color === 0) {
+  if (player.color === "0") {
     AddStartingPiecesWhite();
   } else {
     AddStartingPiecesBlack();
@@ -170,13 +174,13 @@ function kill(piece) {
 }
 
 function GetPiece(e) {
-  console.log(currentColor);
-  if (playerColor === "0") {
+  if(currentColor == 0){
     currentColor = "w";
-  } else {
+  }
+  else{
     currentColor = "b";
   }
-
+  console.log(currentColor);
   if (currentPiece !== null && currentPiece.id !== e.target.id) {
     document.querySelectorAll(".possible_move").forEach((element) => {
       element.classList.remove("possible_move");

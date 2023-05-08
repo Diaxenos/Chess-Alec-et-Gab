@@ -1,14 +1,17 @@
 "use strict";
 const src_b = "/static/img/pieces_b/";
 const src_w = "/static/img/pieces_w/";
-
+import { Player as player } from "./player.js";
 export class Piece {
+  playerOwned;
   color;
   type;
   possible_moves = [];
   img;
   position;
   hasMoved;
+  advanceNumber;
+  player;
   constructor(color) {
     this.color = color;
   }
@@ -176,6 +179,14 @@ export class Piece {
     this.HighlightPossibleMoves();
     return possMoves;
   }
+
+  CheckIfPlayerOwned() {
+    if (this.color == player.color) {
+      this.advanceNumber = -1;
+    } else {
+      this.advanceNumber = 1;
+    }
+  }
 }
 export class Pawn extends Piece {
   constructor(color, CN) {
@@ -198,24 +209,22 @@ export class Pawn extends Piece {
     let diagonalLeft = null;
     let diagonalRight = null;
     let possMoves = [];
-    let advanceNumber = 0;
+    this.CheckIfPlayerOwned();
     if (this.color == 0) {
-      advanceNumber -= 1;
       currentColor = "w";
     } else {
-      advanceNumber += 1;
       currentColor = "b";
     }
     try {
       diagonalRight = document.getElementById(
-        this.position + 10 + advanceNumber
+        this.position + 10 + this.advanceNumber
       );
     } catch (error) {
       console.log("diagonal empty");
     }
     try {
       diagonalLeft = document.getElementById(
-        this.position - 10 + advanceNumber
+        this.position - 10 + this.advanceNumber
       );
     } catch (error) {
       console.log("diagonal empty");
@@ -242,25 +251,25 @@ export class Pawn extends Piece {
     }
 
     if (
-      document.getElementById(this.position + advanceNumber).childNodes
+      document.getElementById(this.position + this.advanceNumber).childNodes
       .length != 0
     ) {
       console.log("blocked");
       blocked = true;
     } else {
-      possMoves.push(this.position + advanceNumber);
+      possMoves.push(this.position + this.advanceNumber);
     }
     if (
       (!this.hasMoved &&
-        !document.getElementById(this.position + advanceNumber * 2)
+        !document.getElementById(this.position + this.advanceNumber * 2)
         .hasChildNodes) ||
-      document.getElementById(this.position + advanceNumber).childNodes
+      document.getElementById(this.position + this.advanceNumber).childNodes
       .length != 0
     ) {
       console.log("blocked");
       blocked = true;
     } else if (!this.hasMoved) {
-      possMoves.push(this.position + advanceNumber * 2);
+      possMoves.push(this.position + this.advanceNumber * 2);
     }
     for (let i = 0; i < diagonalMoves.length; i++) {
       possMoves.push(diagonalMoves[i]);
