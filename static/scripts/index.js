@@ -14,6 +14,8 @@ let currentPiece = null;
 let playerColor = null;
 let turnEnd = false;
 
+
+
 function StartGame(e) {
   if (e.target.id !== "start") {
     return;
@@ -23,7 +25,6 @@ function StartGame(e) {
   console.log(player);
   gameOptions.style.display = "none";
   AddStartingPieces(player);
-
   startTimer(document.getElementById("timer_container"));
 }
 
@@ -165,6 +166,7 @@ function kill(piece) {
     }
   }
 }
+
 function GetColor(pieceColor) {
   if (pieceColor === "w") {
     return 0;

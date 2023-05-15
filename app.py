@@ -11,12 +11,11 @@ import hashlib
 import pymongo
 from bson import json_util, ObjectId
 import json
-
 app = Flask(__name__)
 
 app.register_blueprint(bp_api, url_prefix='/api')
 
-myclient = pymongo.MongoClient("mongodb+srv://diaxenos:123soleil@cluster0.ibqvxjq.mongodb.net/")
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["ChessBras"]
 mycol = mydb["users"]
 myfriendscol = mydb["friends"]
@@ -277,6 +276,7 @@ app.secret_key = "cbca765383981f152ef9319b17cae0109c511b7b3906732336e43cee66fbe7
 @app.route('/')
 def main_app():  # put application's code here
 
+    
     if(session.get('utilisateur') is None):
         session['utilisateur'] = None
     return render_template('game.jinja')
